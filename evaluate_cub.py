@@ -132,7 +132,20 @@ def main():
     # create network
     model = model_generator(args)
     #model.load_state_dict(torch.load("snapshots_CelebA/SCOPS_K8_retrain/model_100000.pth"))
-    model.load_state_dict(torch.load(args.restore_from))
+    # >> HD >>
+    # model.load_state_dict(torch.load(args.restore_from))
+    state_dict = torch.load(args.restore_from)
+    from collections import OrderedDict
+    new_state_dict = OrderedDict()
+    for k, v in state_dict.items():
+        # modify `num_batches_tracked` -> `bias`
+        if len(k)>19 and k[-19:]== "num_batches_tracked":
+            k_new = k[:-19] + "bias"
+            new_state_dict[k_new] = v
+        else:
+            new_state_dict[k] = v
+    model.load_state_dict(new_state_dict)
+    # << HD <<
 
     model.eval()
     model.cuda(gpu0)
@@ -180,15 +193,17 @@ def main():
             batch = {}
             batch['img'] = img
             """
-            if index % 100 == 0:
+            if index == 20:
                 path_split = args.save_dir.split('/')
                 print('{} processd: {}/{}'.format(index, path_split[-4], path_split[-3]))
+                break
             image = batch['img']
             #label = batch['mask']
             img_path = batch['img_path']
             tmp = img_path[0].split("/")
-            img_folder = tmp[4]
-            img_nm = tmp[5].replace(".jpg", ".png")
+            img_folder = tmp[-2]
+            img_nm = tmp[-1].replace(".jpg", ".png")
+            print(img_folder,'/',img_nm)
 
             size = input_size
             output = model(image.cuda(gpu0))
@@ -241,16 +256,18 @@ def main():
                 if not os.path.exists(file_dir):
                     os.makedirs(file_dir)
 
-                Image.fromarray(seg_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename)
-
+                # >> HD
+                # Image.fromarray(seg_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename)
+                Image.fromarray(seg_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename,'png')
+                # << HD
                 seg_overlay_viz = (imgs_viz.numpy()*0.8+ seg_viz*0.7).clip(0,255.0).astype(np.uint8)
                 filename = os.path.join(save_overlay_dir, '{}/{}'.format(img_folder, img_nm))
                 file_dir = os.path.dirname(filename)
                 if not os.path.exists(file_dir):
                     os.makedirs(file_dir)
-
-                Image.fromarray(seg_overlay_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename)
-
+                # >> HD
+                Image.fromarray(seg_overlay_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename,'png')
+                # << HD
                 if args.crf:
                     output_dcrf_prob = utils.denseCRF(imgs_viz.numpy().squeeze().transpose(1,2,0).astype(np.uint8).copy(), output)
 
@@ -267,21 +284,25 @@ def main():
                     file_dir = os.path.dirname(filename)
                     if not os.path.exists(file_dir):
                         os.makedirs(file_dir)
-                    Image.fromarray(seg_dcrf_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename)
+                    # >> HD
+                    Image.fromarray(seg_dcrf_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename,'png')
 
                     seg_dcrf_overlay_viz = (imgs_viz.numpy()*0.8+ seg_dcrf_viz*0.7).clip(0,255.0).astype(np.uint8)
                     filename = os.path.join(save_dcrf_overlay_dir, '{}/{}'.format(img_folder, img_nm))
                     file_dir = os.path.dirname(filename)
                     if not os.path.exists(file_dir):
                         os.makedirs(file_dir)
-                    Image.fromarray(seg_dcrf_overlay_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename)
+                    # >> HD
+                    Image.fromarray(seg_dcrf_overlay_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename,'png')
 
 
                 filename_lm = os.path.join(save_lm_dir, '{}/{}'.format(img_folder, img_nm))
                 file_dir = os.path.dirname(filename_lm)
                 if not os.path.exists(file_dir):
                     os.makedirs(file_dir)
-                Image.fromarray(lms_viz[0,:,:,:].transpose(1, 2, 0), 'RGB').save(filename_lm)
+                # >> HD
+                Image.fromarray(lms_viz[0,:,:,:].transpose(1, 2, 0), 'RGB').save(filename_lm,'png')
+            # >> HD break
 
     #np.save(os.path.join(args.save_dir, 'pred_kp.npy'), landmarks)
     #np.save(os.path.join(args.save_dir, 'gt_kp.npy'), landmarks_gt)

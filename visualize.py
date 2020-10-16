@@ -105,7 +105,10 @@ def Batch_Get_Centers(pred, sm=True):
             # normalize part map as spatial pdf
             part_map = pred_softmax[b,c,:,:]
             k = float(part_map.sum())
-            part_map_pdf = part_map/k
+            # >> HD
+            # part_map_pdf = part_map/k
+            part_map_pdf = part_map/(k+1e-3)
+            # << HD
             x_c, y_c = utils.get_center(part_map_pdf)
             x_c = (x_c+1.0)/2*W # [-1,1] -> [0,W]
             y_c = (y_c+1.0)/2*H

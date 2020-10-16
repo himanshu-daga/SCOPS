@@ -54,9 +54,13 @@ elif osp.exists('/data1/shubhtuls'):
 else:  # Savio
     kData = '/global/home/users/kanazawa/scratch/CUB'
 
-kData = '/xtli-correspondence/CUB_200_2011'
+# >> HD 
+# kData = '/xtli-correspondence/CUB_200_2011'
+kData = '/home/ubuntu/work/scops/SCOPS/data/CUB_200_2011'
 cub_dir = kData
-cub_cache_dir = '/xtli-correspondence/nmr/cachedir/cub'
+# cub_cache_dir = '/xtli-correspondence/nmr/cachedir/cub'
+cub_cache_dir = '/home/ubuntu/work/scops/SCOPS/data/nmr/cachedir/cub'
+# << HD
 
 # -------------- Dataset ------------- #
 # ------------------------------------ #

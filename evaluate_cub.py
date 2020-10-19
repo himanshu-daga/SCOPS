@@ -193,7 +193,8 @@ def main():
             batch = {}
             batch['img'] = img
             """
-            if index == 20:
+            # if index % 100 == 0:
+            if index == 5:
                 path_split = args.save_dir.split('/')
                 print('{} processd: {}/{}'.format(index, path_split[-4], path_split[-3]))
                 break
@@ -257,8 +258,8 @@ def main():
                     os.makedirs(file_dir)
 
                 # >> HD
-                # Image.fromarray(seg_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename)
-                Image.fromarray(seg_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename,'png')
+                Image.fromarray(seg_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename)
+                # Image.fromarray(seg_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename,'png')
                 # << HD
                 seg_overlay_viz = (imgs_viz.numpy()*0.8+ seg_viz*0.7).clip(0,255.0).astype(np.uint8)
                 filename = os.path.join(save_overlay_dir, '{}/{}'.format(img_folder, img_nm))
@@ -266,8 +267,8 @@ def main():
                 if not os.path.exists(file_dir):
                     os.makedirs(file_dir)
                 # >> HD
-                Image.fromarray(seg_overlay_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename,'png')
-                # << HD
+                Image.fromarray(seg_overlay_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename)
+                # << HD xx
                 if args.crf:
                     output_dcrf_prob = utils.denseCRF(imgs_viz.numpy().squeeze().transpose(1,2,0).astype(np.uint8).copy(), output)
 
@@ -285,7 +286,7 @@ def main():
                     if not os.path.exists(file_dir):
                         os.makedirs(file_dir)
                     # >> HD
-                    Image.fromarray(seg_dcrf_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename,'png')
+                    Image.fromarray(seg_dcrf_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename)
 
                     seg_dcrf_overlay_viz = (imgs_viz.numpy()*0.8+ seg_dcrf_viz*0.7).clip(0,255.0).astype(np.uint8)
                     filename = os.path.join(save_dcrf_overlay_dir, '{}/{}'.format(img_folder, img_nm))
@@ -293,7 +294,7 @@ def main():
                     if not os.path.exists(file_dir):
                         os.makedirs(file_dir)
                     # >> HD
-                    Image.fromarray(seg_dcrf_overlay_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename,'png')
+                    Image.fromarray(seg_dcrf_overlay_viz.squeeze().transpose(1, 2, 0), 'RGB').save(filename)
 
 
                 filename_lm = os.path.join(save_lm_dir, '{}/{}'.format(img_folder, img_nm))
@@ -301,7 +302,7 @@ def main():
                 if not os.path.exists(file_dir):
                     os.makedirs(file_dir)
                 # >> HD
-                Image.fromarray(lms_viz[0,:,:,:].transpose(1, 2, 0), 'RGB').save(filename_lm,'png')
+                Image.fromarray(lms_viz[0,:,:,:].transpose(1, 2, 0), 'RGB').save(filename_lm)
             # >> HD break
 
     #np.save(os.path.join(args.save_dir, 'pred_kp.npy'), landmarks)

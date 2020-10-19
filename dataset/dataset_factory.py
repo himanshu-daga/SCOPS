@@ -11,6 +11,7 @@ IMG_MEAN = np.array((104.00698793, 116.66876762,
 
 def dataset_generator(args):
     
+    print(args.dataset)
     if args.dataset.split('_')[0] == 'CelebAWild':
         from dataset.celeba_wild_dataset import CelebAWildDataset
         dataset = CelebAWildDataset
@@ -25,6 +26,10 @@ def dataset_generator(args):
                                 scale=args.random_scale, mirror=args.random_mirror, mean=IMG_MEAN,
                                 center_crop=args.center_crop, ignore_saliency_fg=args.ignore_saliency_fg,
                                 split='train')
+    elif args.dataset.split('_')[0] == 'CUB':
+        from dataset.cub import CUBDataset
+        dataset = CUBDataset
+        train_dataset = dataset(args.data_dir)
     else:
         print('Dataset [{}] does not exisit!'.format(args.dataset))
         return None

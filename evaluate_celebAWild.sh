@@ -42,7 +42,7 @@ do
         K_index=${K_index%%_*}
 
         NUM_PARTS=$((K_index))
-        echo 'num classes' $NUM_CLASS
+	echo 'num classes' $NUM_CLASS
 
         SNAPSHOT="${MODEL_DIR}/$method/model_${iter}.pth"
         # Testing

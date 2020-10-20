@@ -30,6 +30,10 @@ def dataset_generator(args):
         from dataset.cub import CUBDataset
         dataset = CUBDataset
         train_dataset = dataset(args.data_dir)
+    elif args.dataset.split('_')[0] == 'Sofa':
+        from dataset.sofa import SofaDataset
+        dataset = SofaDataset
+        train_dataset = dataset(args.data_dir)
     else:
         print('Dataset [{}] does not exisit!'.format(args.dataset))
         return None
